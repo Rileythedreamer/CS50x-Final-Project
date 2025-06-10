@@ -1,21 +1,77 @@
 TODO :I need to add an owner's dashboard which has links to create product page and view all the orders everyone has ever placed.
-I decided to build an e commerce website for my final project because there are lots of shops in my country who sell their products using Instagram which isn't designed to be an e commerce platform
+I decided to build an e commerce website for my final project because there are lots of shops in my country who sell their products using Instagram which 
+isn't designed to be an e commerce platform
  so i thought many shop owners might start wanting to have their own websites which is more reliable as an e commerce platform.
 To start I needed a general idea of what functionalities my website needed to have, 
-(my goal was to build a website for selling clothes)In order to define my own requirments I started by visiting several online Clothing Stores like Nike, Adidas, ZARA and several others
+(my goal was to build a website for selling clothes)In order to define my own requirments I started by visiting several online Clothing Stores like 
+Nike, Adidas, ZARA and several others
 later in the development process  I also used these websites for mock data.  
 After writting down a todolist for all the functionalities i needed to implement  
  I listed all the front end pages i needed for the shop
  (the necessary ones first and I would add more if i realized i needed them along the way)
  and i minimized writting custom css styles to speed up the process,
  I generally prefer minimal designs so I mainly just used Bootstrap to keep everything looking tidy.
-After listing the all the html files i would need I started  writting the front end code for them and in the beginning i hardcoded all the data i would convert these data to jinja syntax once i had moved on
-to the backend
+After listing the all the html files i would need I started  writting the front end code for them and in the beginning i hardcoded all the data i would 
+convert these data to jinja syntax once i had moved on to the backend
+pages like shop.html or dashboards are connected to the backend and i knew that i needed to implement 
+this but in the beginning i started by making the entire website statically basically it didn't work and it just looked like a screenshot 
+for example in the shop.html page at first i started by hard coding one single product so i made a card using html and bootstrap 
+for one product hardcoding informations like price or image and etc.
+so later when i did implement the backend  i needed to use the data passed to the front end which was a row of dictionaries
+ each row was product and the columns of the dictionary had all the info about that product , and i replaced the hard coded data with jinja syntax so 
+that each product in the database would dynamically appear on the shop listing page
 - home.html : the main landing page of the shop
 - shop.html : which would list all the products avilable in the shop 
-- contact.html : which would inslude the contact detail of the shop like phone number and address
--
+- contact.html : which would include the contact detail of the shop like phone number and address
+- ownerdashboard 
+- userdashboard
 - 
-At the beginning when i started coding it up I realized shop owners would probably want to be able to manage their database of products using the website they would want to delete items when they
- get unavailable and add new products So i realized i needed to add role based authentication so that the owners would have access to an Owner's Dashboard which would allow them to manage their shop.
+At the beginning when i started coding it up I realized shop owners would probably want to be able to manage their database of products using the website 
+they would want to delete items when they
+get unavailable and add new products So i realized i needed to add role based authentication so that the owners would have access to an Owner's Dashboard 
+which would allow them to manage their shop.
 this dashboard is how i added products to the database myself.
+
+
+prompt:
+I wanna write a README.md file for my CS50 final project 
+I have almost never written a README file so i basically have no idea how to get started
+I thought first i would write everything i could think of about the process i went through while coding my project without any structure (since it has been 6 months ever since i did this project i thought this would be a nice way to remember everything) after i have a general idea of what i did i would go ahead and structure it into a README file.
+this is what i have so far :
+TODO :I need to add an owner's dashboard which has links to create product page and view all the orders everyone has ever placed.
+I decided to build an e commerce website for my final project because there are lots of shops in my country who sell their products using Instagram which 
+isn't designed to be an e commerce platform
+ so i thought many shop owners might start wanting to have their own websites which is more reliable as an e commerce platform.
+To start I needed a general idea of what functionalities my website needed to have, 
+(my goal was to build a website for selling clothes)In order to define my own requirments I started by visiting several online Clothing Stores like 
+Nike, Adidas, ZARA and several others
+later in the development process  I also used these websites for mock data.  
+After writting down a todolist for all the functionalities i needed to implement  
+ I listed all the front end pages i needed for the shop
+ (the necessary ones first and I would add more if i realized i needed them along the way)
+ and i minimized writting custom css styles to speed up the process,
+ I generally prefer minimal designs so I mainly just used Bootstrap to keep everything looking tidy.
+After listing the all the html files i would need I started  writting the front end code for them and in the beginning i hardcoded all the data i would 
+convert these data to jinja syntax once i had moved on to the backend
+pages like shop.html or dashboards are connected to the backend and i knew that i needed to implement 
+this but in the beginning i started by making the entire website statically basically it didn't work and it just looked like a screenshot 
+for example in the shop.html page at first i started by hard coding one single product so i made a card using html and bootstrap 
+for one product hardcoding informations like price or image and etc.
+so later when i did implement the backend  i needed to use the data passed to the front end which was a row of dictionaries
+ each row was product and the columns of the dictionary had all the info about that product , and i replaced the hard coded data with jinja syntax so 
+that each product in the database would dynamically appear on the shop listing page
+- home.html : the main landing page of the shop
+- shop.html : which would list all the products avilable in the shop 
+- contact.html : which would include the contact detail of the shop like phone number and address
+- ownerdashboard 
+- userdashboard
+- 
+At the beginning when i started coding it up I realized shop owners would probably want to be able to manage their database of products using the website 
+they would want to delete items when they
+get unavailable and add new products So i realized i needed to add role based authentication so that the owners would have access to an Owner's Dashboard 
+which would allow them to manage their shop.
+this dashboard is how i added products to the database myself.
+your task: give me honest feedback, and constructive criticism. and help me move forward guide me through the process of writting the README file. ask me questions to nudge me in the direction i should go on
+Do you think it's a good idea to write everything down first and then try to tidy it up and structure it later? 
+don't sugarcoat or try to please me by complimenting me unnecessarily
+be honest and frank and straightforward.
