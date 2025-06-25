@@ -39,17 +39,17 @@ Frontend: HTML, CSS, Bootstrap, Jinja2 templates,
         - User Dashboard
         - Contact Page
 
-**What parts of the project were hardest for you to implement?**
+❓ **What parts of the project were hardest for you to implement?**
 At first getting the hang of passing data between front end and backend was challenging, after getting used to the syntax it wasn't hard.
 **Challenges :**
   - implementing file uplaod (how to upload where to store the image how to access it)
   - Deleting Data from the database (i faced foreign key constraint multiple times and i couldn't figure out why later i realised i needed to first delete the variants of a product before deleting a product)
 
-? Which parts were most fun or interesting for you?
+❓ Which parts were most fun or interesting for you?
 the parts that are most challenging are usually the most fun after you finally figure them out.
 I generally enjoy the backend.
 
-**? If you had more time, what would you add or improve?**
+❓ ** If you had more time, what would you add or improve?**
 - Payment Gateway
 - filter by category for product listing page
 - Search functionality for products
