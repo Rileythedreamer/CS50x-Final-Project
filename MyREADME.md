@@ -207,3 +207,260 @@ EXTRA ROUND (Optional, but very useful)
 What are 3-5 important lessons you learned while building this project?
 
 2️⃣ If you rebuilt this project from scratch today, what would you do differently?
+
+Let’s drill into each area so we can enrich your README with concrete detail. Please answer these:
+
+### 1. User Flows & Features
+
+1. **Registration & Login:**
+
+   * How does a new user sign up? What fields are required, and what validations run?
+   username , password, email, full name, password
+   these fields are flagged as required in the HTML so user will be informed that they have to provide these info to be able to sign up
+   and when the from is submitted via POST using flask and if statements i check to make sure theyr provided these fields
+   then the password is checked against password confirmation and they should match otherwise the user will recieve an error
+   In general in this project i use flash to inform the user when they are trying to do something that isn't allowed or when there is an error
+   if the username they chose is already in the datbase they also can't sign up
+   after these requirments are met , the form's inputs is INSERTed into the datbase using the datbasename.execute() function and the user is logged in.
+
+   * What’s the post‑login redirect or landing page for customers vs. owners?
+   they both get redirected to homepage
+
+    sign up and login in genreal are managed using Flask's session library / framework
+2. **Shopping Cart & Checkout:**
+
+   * Step by step, what happens when a customer adds an item to their cart?
+
+   @app.route("/add_to_cart", methods=["GET", "POST"])
+@login_required
+def addtocart():
+    if request.method =="POST":
+        # product_id = int(request.form.get("product_id"))
+        product_id = request.args.get("product_id") or request.form.get("product_id")
+        product_name = request.form.get("product_name")
+        price = request.form.get("price")
+        quantity = request.form.get("quantity")
+        color = request.form.get("color")
+        size = request.form.get("size")
+
+        product_id = int(product_id)
+        variant_id_rows = db.execute(
+            """SELECT id FROM product_variants
+            WHERE product_id = ? AND size = ? AND color = ?""",
+            product_id, size, color
+
+        )
+        if not variant_id_rows:
+            flash("This item is not available", "error")
+            return redirect("/cart")
+        variant_id = variant_id_rows[0]["id"]
+        # when the form is submitted the information
+        # of the product must be inserted into the sql database
+
+        db.execute(
+            """INSERT INTO cart_items
+            (user_id, product_variant_id, quantity)
+            VALUES (?, ?, ?) """,
+            session["user_id"], variant_id, quantity
+        )
+        return redirect("/cart")
+    explain it for me using the code provided
+    my own explanation: 1. the product's info is extracted from the html form using request.forms.get
+    and 2. then it's added to the cart_items table
+
+   * Describe the checkout process: what forms do they fill, what payment methods are supported (or simulated), and what confirmation steps occur?
+
+   the checkout process was designed from the experience i have had while making online purchases
+   and also this website is designed so that both the owner and customers can make good use of it so after the customer makes the purchase the owner needs to have some basic infor about the customner for example the owner needs to know their email address so that they can send emails whenever necessary for example when they ship the order they would inform the customer
+
+    and the owner also needs to know the customer's postal address so that they can ship the order
+    for this part enhancments and improvements include : maybe all the data of all orders can be inserted into a spreadsheet so that it's easier for owner's to manage and whenever an order is placed owner is informed so that they don't have to check the website all the time
+
+    @app.route('/checkout', methods=["GET"])
+@login_required
+def checkout():
+    cart_details = get_cart_details(session["user_id"])
+    return render_template("checkout.html",
+                            cart_items = cart_details[0], n_items = cart_details[1], total_price = cart_details[2])
+
+ 
+ @app.route('/place-order', methods=["GET", "POST"])
+@login_required
+def place_order():
+    buyer = session["user_id"]
+    buyer_name = request.form.get("name")
+    email = request.form.get("email")
+    address = request.form.get("address")
+    city = request.form.get("city")
+    state = request.form.get("state")
+    zip_code = request.form.get("zip-code")
+    payment_method = request.form.get("payment_method")
+
+    cart_items, n_items, total_price = get_cart_details(buyer)
+    
+    order_id = db.execute("""
+    INSERT INTO orders (
+        user_id, full_name, email, address, city, state, zip, payment_method, total_price
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, buyer, buyer_name, email, address, city, state, zip_code, payment_method, total_price)
+
+    # update orders table using buyer's cart
+    for item in cart_items:
+        db.execute("""
+            INSERT INTO order_items (
+                order_id, product_variant_id, quantity, price
+            ) VALUES (?, ?, ?, ?)
+        """, order_id, item["variant_id"], item["item_quantity"], item["product_price"])
+
+        # Update product_variant stock
+        db.execute("""
+            UPDATE product_variants
+            SET stock = stock - ?
+            WHERE id = ?
+        """, item["item_quantity"], item["variant_id"])
+
+        # update product stock
+        db.execute("""
+            UPDATE products
+            SET stock = stock - ?
+            WHERE id = ?
+        """, item["item_quantity"], item["product_id"])
+
+    # clear cart when order is placed 
+    db.execute("DELETE FROM cart_items WHERE user_id = ?", buyer)
+    
+    order_list = db.execute("""
+                       SELECT * FROM orders 
+                       WHERE
+                       user_id = ?
+                       AND
+                       id = ?""", 
+                       session["user_id"], 
+                       order_id)
+    if order_list:
+        order = order_list[0]
+    else:
+        return "order not found", 404
+    items = db.execute("""
+                       SELECT * FROM order_items
+                       WHERE
+                       order_id = ?""",  
+                       order_id)
+    return render_template("confirmation.html", order = order, items= items)
+
+
+ 
+
+3. **Dashboards:**
+
+   * For Owners: what data do you display (e.g., sales totals, new orders)? Any charts or tables?
+     owner's dashboard has only 3 features, 
+     1 . enables the owner to view all the orders that has even been placed on the website (from here they can update the status of orders when they ship them and they can access info about orders and their customers so thaey can gather the info they need for shipping products purchased)
+     2. add or remove products from the website
+
+     future improvments: add sales data , maybe add a feature that displays popular products or lets owner know which products are out of stock and also on peopl's wichlists so that they know what to make available on the shop
+   * For Customers: what order history details are shown, and can they reorder or track status?
+   the cutomer's dashboard doesn't have many features it just has 3 links 1 takes the user o a page that displays all of the orders that custoer has placed on the website 
+   2. takes the customer to /shop
+   3. takes the cutomer to /contact page
+
+   customers can click view orders and see all the past orders they've placed on the store which also display the status when it's shipped it will be displayed here 
+
+
+### 2. Design & Architecture
+
+4. **Project Structure:**
+
+   * How have you organized your Flask app directories (e.g., `static/`, `templates/`, `helpers/`, `models/`)?
+   > project
+        app.y
+        static/
+        templates/
+
+   * Any design patterns (blueprints, service layer, etc.)?
+   nope
+
+
+5. **Database Details:**
+
+   * Which columns/indexes are most critical for performance?
+   i have no idea i think all of it is necessary
+   * Any decisions around foreign‑key constraints or normalization beyond variants?
+   no 
+   in this project i mainly went with all the things i had learned in CS50 lectures and psets and tried to build a project using all the knwoledge from this course alone when i built this project i didn't have any knwoledge of web design or computer science outside of what i had learned in cs i made decision of not learning any other languages or frameword or tools for the time being in order to strengthening my fooundations before moving on
+
+### 3. Deployment & DevOps
+
+6. **Environment & Hosting:**
+ i did not host it or make it online
+   * Where would you deploy this (Heroku, AWS, DigitalOcean)?
+   * How do you manage environment variables (e.g., secret keys, database URLs)?
+
+7. **CI/CD & Containerization:**
+i plan to learn these when taking CS50 w
+   * Do you plan to use Docker? Automated pipelines (GitHub Actions, Travis CI)?
+
+### 4. Testing & QA
+
+8. **Test Coverage:**
+no tests are automated i did all the testing manually by simulating the owner's experience and the customer's
+how the wner might wanna add or manage products and access orders and how the customer will shop on the website
+   * Which parts are manually tested vs. automated?
+   * Any example unit or integration tests you wrote (e.g., for `get_cart_details`)?
+
+9. **Edge Cases:**
+i tried to take in account what edge case might occur and handle it using flask flashing error messages and redirecting
+   * How do you handle invalid form submissions, network errors during checkout, or duplicate orders?
+
+### 5. Security & Validation
+
+10. **Authentication & CSRF:**
+i used flask's framework to hash passwords
+
+    * CSRF protection approach? Rate‑limiting login attempts?
+    * Password policy (min length, complexity)?
+
+11. **Data Validation:**
+
+    * How do you validate user input (e.g., order address fields, product creation)?
+
+### 6. Lessons & Roadmap
+
+12. **Lessons Learned:**
+
+    * List 3–5 specific “aha” moments or pitfalls you overcame.
+    1. when deleting products i faced an error that was caused by not deleting the product vaiants before atempting to delete that product
+    which caused a lot of confusion but then i figured it out
+    2. to display images for each product i needed to owner to upload a photo and i needed a way of storing the photo on the database so that i could access it later and display it 
+    i realised that convention with flask is to have an upload/ directory inside the static/ folder inside the main project directory and to store the images there , when the owner uploads the image i store it inside this folder and store the image url in the image column of the product table of the  database later whenever i need it i use an image tage and pass in the image url into the src attribute like this 
+
+    {{% for product in products %}}
+        <img src="{{product.image_url }}">
+    {{% endfor %}}
+
+    when i wanted to implement this feature i came up with the psuedocode and logic myself and it made sense but i didn't know how to translate it to python to do this i used the help of chatgpt 
+
+    i don't remember much about coding this project and the chalanges i faced because it was a long time ago
+
+13. **Future Roadmap:**
+
+    * Beyond Django/PostgreSQL, what v2 features will you prioritize first (e.g., search, payment integration, analytics)?
+
+Answer these and we’ll integrate your details into a 740+ word README.
+i think this project is a solid way of practicing what i learned in cs50 but if i wanted to use it in the real world i would definetly consider building a version 2 of it using django and postgres to firtly make the deployment easier i  have realised many hosts are postgres and django friendly 
+django has many capabilities
+
+i think implementing search and filter capabilities is necessary 
+
+i didn't implement a payment agteway because that required signing up to stripe/ paypal which i can't without a credit card
+
+but i will definetly need to do this for a future project i plan on learning these
+
+a version 2 of this website will also have sales data available on owner's dashboard
+i also think managing products could be improved , i think owner should be able to edit products which i think it's easier to implement using django models and forms
+
+and the owner should be able to easily increase the stock quantity whenever they want 
+without having to remove and ass producrt from scratch
+
+they should be informed whoch prodcuts are out of stock and users have tried to add to add to their cart (sorted by the amount of times people have tried to purchase them) so that they know which prodcuts would sell best if they made them avilable
+
