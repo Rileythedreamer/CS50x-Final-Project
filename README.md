@@ -1,5 +1,5 @@
 # Flask-Based Online Shop
-#### Video Demo:  <https://your-video-url-here>
+#### Video Demo:  <https://youtu.be/agswBqxFVQo>
 #### Description:
 
 This project is a feature-rich, web-based **Online Shopping Platform** developed using **Python (Flask)**, **SQLite**, and standard web technologies (HTML, CSS, JS). It simulates a real-world e-commerce experience, supporting multiple user roles (customers and owners), product variant management, secure login, cart and order handling, and more. It draws directly upon many core topics taught in CS50, including HTTP, sessions, SQL, and Flask.
